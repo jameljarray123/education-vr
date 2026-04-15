@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>اكتشف تونس بتقنية الواقع الافتراضي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body { font-family: sans-serif; }
+.section { padding: 60px 20px; text-align: center; }
+
+.option {
+  display:block;
+  width:100%;
+  margin:10px 0;
+  padding:10px;
+  background:#e0f2fe;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.option:hover {
+  background:#38bdf8;
+  color:white;
+}
+.correct { background:green !important; color:white; }
+.wrong { background:red !important; color:white; }
+
+.info-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: 0.3s;
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  font-size: 18px;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+.trip-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.trip-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.trip-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.trip-card h3 {
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+</style>
+</head>
+
+<body class="bg-blue-50">
+
+<!-- NAV -->
+<nav class="bg-blue-700 text-white p-4 text-center text-xl font-bold">
+🌍 اكتشف تونس بتقنية الواقع الافتراضي
+</nav>
+
+<!-- HOME -->
+<section class="section">
+<h1 class="text-3xl font-bold text-blue-800 mb-4">
+مرحبا بكم في رحلة افتراضية لاكتشاف أجمل المعالم التاريخية في تونس
+</h1>
+<p class="mb-6 text-lg">
+هذا الموقع يمكنكم من زيارة أماكن دون مغادرة القسم
+</p>
+
+<button onclick="go('trips')"
+class="bg-teal-500 text-white px-6 py-3 rounded-lg">
+ابدأ الرحلة
+</button>
+</section>
+
+<!-- PROJECT -->
+<section class="section bg-blue-100">
+<h2 class="text-2xl font-bold mb-4">تقديم المشروع</h2>
+<p class="max-w-xl mx-auto">
+يهدف هذا الموقع إلى توظيف الواقع الافتراضي في التعليم، لتمكين التلاميذ من استكشاف المعالم التاريخية بطريقة تفاعلية وممتعة، مما يعزز الفهم ويقرب المعرفة من الواقع.
+</p>
+</section>
+
+<!-- TRIPS -->
+<section id="trips" class="section">
+<h2 class="text-2xl font-bold mb-6">اختيار الرحلة</h2>
+
+<div class="flex justify-center gap-6 flex-wrap">
+
+  <!-- الجم -->
+    <div class="trip-card" onclick="loadPlace('eljem')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Anfiteatro%2C_El_Jem%2C_T%C3%BAnez%2C_2016-09-04%2C_DD_09.jpg/500px-Anfiteatro%2C_El_Jem%2C_T%C3%BAnez%2C_2016-09-04%2C_DD_09.jpg">
+      <h3> الجم</h3>
+    </div>
+
+   <div class="trip-card" onclick="loadPlace('carthage')">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGUaxo6D1f5ilKQinxiISU87y5h4P7FFlcsJlN5FYmsWwafP-jTjUURVakOiXyjDXWZxCUNJ1pJirRsL_H2_4ESb7QVWyXTOrHNul5b1fsC6zvvpeuJxrDU6u5yuwEEzp_LWKtcPA=w608-h351-n-k-no">
+      <h3> قرطاج</h3>
+    </div>
+
+ <div class="trip-card" onclick="loadPlace('dougga')">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG_rqzkx2jBRgDXJuDxN43otB0Hsd1PMd1mxVqiwZCCVls986lL8xF-rMeTsh7coeeju7jat9JJGwXTmZ1b0AtXmBQudG8g59-ECc-HTns_Y-RdAvLWII7Qe7Lb0SLhlceOvPJXKe74Skk=w608-h351-n-k-no">
+      <h3>دقة</h3>
+    </div>
+
+</div>
+</section>
+
+<!-- VR -->
+<section id="vr" class="section bg-blue-100">
+
+<h2 id="placeTitle" class="text-2xl font-bold mb-4"></h2>
+<p id="placeDesc" class="mb-4"></p>
+
+<a-scene embedded vr-mode-ui="enabled: true">
+
+<a-assets>
+<img id="eljem" src="https://images.unsplash.com/photo-1600185365483-26d7cddaa7db?q=80&w=2000">
+<img id="carthage" src="https://truevirtualtours.com/panorama/29086/360view">
+<img id="dougga" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2000">
+</a-assets>
+
+<a-sky id="sky" src="#eljem"></a-sky>
+<a-entity camera look-controls></a-entity>
+
+<a-sphere position="0 1.5 -3" color="yellow"
+onclick="showInfo()"></a-sphere>
+
+<a-text id="infoText"
+position="0 2 -3"
+color="yellow"
+align="center"></a-text>
+
+</a-scene>
+</section>
+
+<!-- INFO -->
+<section class="section">
+<h2 class="text-2xl font-bold mb-4">معلومات</h2>
+
+<div id="infoCards" class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"></div>
+
+</section>
+
+<!-- QUIZ -->
+<section class="section bg-blue-100 text-center">
+  <h2 class="text-3xl font-bold text-blue-800 mb-6">🎮 اختبار الرحلة</h2>
+
+  <div class="bg-white p-6 rounded-xl shadow-lg max-w-xl mx-auto">
+
+    <h3 id="quizTitle" class="text-xl font-bold mb-4">
+      اختر رحلة لبدء الاختبار
+    </h3>
+
+    <div id="quizContainer"></div>
+
+    <p id="score" class="text-lg font-bold text-blue-700 mt-4">النقاط: 0</p>
+
+    <button onclick="resetQuiz()" class="bg-gray-300 px-4 py-2 rounded mt-3">
+      إعادة الاختبار
+    </button>
+
+  </div>
+</section>
+
+<!-- Congrats Modal -->
+<div id="congrats" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center">
+  <div class="bg-white p-10 rounded-xl text-center shadow-lg">
+    <h2 class="text-3xl font-bold text-green-600 mb-4">🎉 أحسنت!</h2>
+    <p id="finalScore" class="text-lg mb-4"></p>
+    <button onclick="closeCongrats()" class="bg-green-500 text-white px-6 py-2 rounded">
+      متابعة
+    </button>
+  </div>
+</div>
+
+<!-- EVALUATION -->
+<section class="section">
+<h2 class="text-2xl font-bold mb-4">التقييم 📝</h2>
+<textarea placeholder="ماذا شاهدت؟" class="block mx-auto mb-2 p-2 border"></textarea>
+<textarea placeholder="أي موقع أعجبك؟" class="block mx-auto mb-2 p-2 border"></textarea>
+</section>
+
+<!-- FEEDBACK -->
+<section class="section bg-blue-100">
+<h2 class="text-2xl font-bold mb-4">رأي التلميذ</h2>
+<p>هل أعجبك التعلم بالواقع الافتراضي؟</p>
+<button class="bg-green-400 p-2 m-2">نعم</button>
+<button class="bg-red-400 p-2 m-2">لا</button>
+</section>
+
+<!-- END -->
+<section class="section">
+<h2 class="text-2xl font-bold mb-4">الخاتمة</h2>
+<p>
+مكنتنا هذه الرحلة الافتراضية من اكتشاف تاريخ تونس بطريقة حديثة، حيث أصبح التعلم أكثر تفاعلاً ومتعة بفضل التكنولوجيا.
+</p>
+</section>
+
+<script>
+function go(id){
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+function loadPlace(place){
+
+const title = document.getElementById('placeTitle');
+const desc = document.getElementById('placeDesc');
+const sky = document.getElementById('sky');
+const infoList = document.getElementById('infoList');
+
+if(place==='eljem'){
+title.innerText="الجم";
+desc.innerText="مرحبا بكم في الجم، أحد أكبر المدرجات الرومانية في العالم";
+sky.setAttribute('src','#eljem');
+
+
+}
+
+if(place==='carthage'){
+title.innerText="قرطاج";
+desc.innerText="حضارة فينيقية عظيمة";
+sky.setAttribute('src','#carthage');
+
+
+}
+
+if(place==='dougga'){
+title.innerText="دقة";
+desc.innerText="مدينة أثرية رومانية مميزة";
+sky.setAttribute('src','#dougga');
+
+
+}
+loadQuiz(place);
+updateInfo(place);
+go('vr');
+}
+function updateInfo(place){
+
+const container = document.getElementById("infoCards");
+
+if(place === "carthage"){
+container.innerHTML = `
+<div class="info-card"><div class="icon">📌</div><p>تقع قرب العاصمة تونس</p></div>
+<div class="info-card"><div class="icon">🏺</div><p>أسسها الفينيقيون</p></div>
+<div class="info-card"><div class="icon">💰</div><p>كانت مركزاً تجارياً مهماً</p></div>
+`;
+}
+
+if(place === "eljem"){
+container.innerHTML = `
+<div class="info-card"><div class="icon">📍</div><p>يقع في ولاية المهدية</p></div>
+<div class="info-card"><div class="icon">🏛</div><p>بُني في العهد الروماني</p></div>
+<div class="info-card"><div class="icon">🌍</div><p>من التراث العالمي</p></div>
+`;
+}
+
+if(place === "dougga"){
+container.innerHTML = `
+<div class="info-card"><div class="icon">📍</div><p>تقع في ولاية باجة</p></div>
+<div class="info-card"><div class="icon">🏛</div><p>مدينة رومانية قديمة</p></div>
+<div class="info-card"><div class="icon">⭐</div><p>موقع أثري محفوظ</p></div>
+`;
+}
+
+}
+function showInfo(){
+document.getElementById('infoText')
+.setAttribute('value','كان يستعمل للعروض القتالية ويتسع لآلاف المتفرجين');
+}
+
+let score = 0;
+let currentQuiz = [];
+
+// ===== QUIZ DATA =====
+const quizzes = {
+  eljem: [
+    {q: "الجم هو:", options: ["مدرسة", "ملعب روماني"], correct: 1},
+    {q: "يستعمل ل:", options: ["العروض القتالية", "الدراسة"], correct: 0}
+  ],
+  carthage: [
+    {q: "قرطاج حضارة:", options: ["فينيقية", "رومانية"], correct: 0},
+    {q: "كانت مركز:", options: ["تجاري", "رياضي"], correct: 0}
+  ],
+  dougga: [
+    {q: "دقة مدينة:", options: ["رومانية", "حديثة"], correct: 0},
+    {q: "تقع في:", options: ["باجة", "تونس العاصمة"], correct: 0}
+  ]
+};
+
+// ===== LOAD QUIZ =====
+function loadQuiz(place){
+  score = 0;
+  currentQuiz = quizzes[place];
+
+  document.getElementById("quizTitle").innerText = "اختبار " + placeName(place);
+  document.getElementById("score").innerText = "النقاط: 0";
+
+  const container = document.getElementById("quizContainer");
+  container.innerHTML = "";
+
+  currentQuiz.forEach((item, index)=>{
+    let html = `<div class="mb-4">
+      <p class="font-bold">${item.q}</p>`;
+
+    item.options.forEach((opt,i)=>{
+      html += `<button onclick="answer(${index},${i},this)" class="option">${opt}</button>`;
+    });
+
+    html += `</div>`;
+    container.innerHTML += html;
+  });
+}
+
+// ===== ANSWER =====
+function answer(qIndex, optIndex, btn){
+  const correct = currentQuiz[qIndex].correct;
+
+  if(btn.classList.contains("answered")) return;
+
+  btn.classList.add("answered");
+
+  if(optIndex === correct){
+    btn.classList.add("correct");
+    score++;
+  } else {
+    btn.classList.add("wrong");
+  }
+
+  document.getElementById("score").innerText = "النقاط: " + score;
+
+  if(score === currentQuiz.length){
+    showCongrats();
+  }
+}
+
+// ===== RESET =====
+function resetQuiz(){
+  document.getElementById("quizContainer").innerHTML = "";
+  document.getElementById("score").innerText = "النقاط: 0";
+}
+
+// ===== CONGRATS =====
+function showCongrats(){
+  document.getElementById("finalScore").innerText = "ممتاز! تحصلت على " + score + "/" + currentQuiz.length;
+  document.getElementById("congrats").classList.remove("hidden");
+}
+
+function closeCongrats(){
+  document.getElementById("congrats").classList.add("hidden");
+}
+
+// ===== NAME =====
+function placeName(place){
+  if(place==="eljem") return "الجم";
+  if(place==="carthage") return "قرطاج";
+  if(place==="dougga") return "دقة";
+}
+
+
+</script>
+
+</body>
+</html>
