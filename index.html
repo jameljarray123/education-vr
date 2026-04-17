@@ -80,6 +80,32 @@ body { font-family: sans-serif; }
   font-weight: bold;
   color: #1e3a8a;
 }
+.activity-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.activity-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.activity-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.activity-card h3 {
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
 </style>
 </head>
 
@@ -87,7 +113,7 @@ body { font-family: sans-serif; }
 
 <!-- NAV -->
 <nav class="bg-blue-700 text-white p-4 text-center text-xl font-bold">
-🌍 اكتشف تونس بتقنية الواقع الافتراضي
+ اكتشف تونس بتقنية الواقع الافتراضي التعليمي
 </nav>
 
 <!-- HOME -->
@@ -134,10 +160,68 @@ class="bg-teal-500 text-white px-6 py-3 rounded-lg">
       <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG_rqzkx2jBRgDXJuDxN43otB0Hsd1PMd1mxVqiwZCCVls986lL8xF-rMeTsh7coeeju7jat9JJGwXTmZ1b0AtXmBQudG8g59-ECc-HTns_Y-RdAvLWII7Qe7Lb0SLhlceOvPJXKe74Skk=w608-h351-n-k-no">
       <h3>دقة</h3>
     </div>
+<div class="trip-card" onclick="loadPlace('nature')">
+      <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=1170&h=351&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+      <h3>رحلة إلى الطبيعة</h3>
+    </div>
+
+
+<div class="trip-card" onclick="loadPlace('sea')">
+      <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+      <h3>رحلة إلى الشاطئ</h3>
+    </div>
+
+
+<div class="trip-card" onclick="loadPlace('museum')">
+      <img src="https://icom.museum/wp-content/uploads/2020/07/ICOM_Voices_W-Maderbacher_IMG2-1024x683.jpeg">
+      <h3>زيارة المتحف</h3>
+    </div>
+
 
 </div>
-</section>
 
+</section>
+<section id="activities" class="py-20 bg-gradient-to-r from-blue-100 to-blue-200">
+  <div class="container mx-auto text-center">
+
+    <h2 class="text-4xl font-bold text-blue-800 mb-12">
+      🎭 الأنشطة الثقافية
+    </h2>
+
+    <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+
+      <!-- Activity 1 -->
+      <div onclick="goToVR('science')" class="activity-card">
+        <img src="https://plus.unsplash.com/premium_vector-1722695852645-9243ff53079c?q=80&w=800" />
+        <h3>🔬 معرض العلوم</h3>
+      </div>
+
+      <!-- Activity 2 -->
+      <div onclick="goToVR('art')" class="activity-card">
+        <img src="https://plus.unsplash.com/premium_vector-1763102298178-5ef5e18228f8?q=80&w=800" />
+        <h3>🎨 ورشة الفنون</h3>
+      </div>
+
+      <!-- Activity 3 -->
+      <div onclick="goToVR('quiz')" class="activity-card">
+        <img src="https://plus.unsplash.com/premium_vector-1721296175273-327b6a8f4c42?w=800" />
+        <h3>🧠 مسابقة المعرفة</h3>
+      </div>
+
+      <!-- Activity 4 -->
+      <div onclick="goToVR('theater')" class="activity-card">
+        <img src="https://plus.unsplash.com/premium_vector-1760425177481-e97c2d2ae44a?w=800" />
+        <h3>🎭 مسرح المدرسة</h3>
+      </div>
+
+    </div>
+
+    <p class="mt-10 text-blue-700 text-lg">
+      ✨ كل نشاط مرتبط بتجربة واقع افتراضي تفاعلية لتعزيز التعلم
+    </p>
+
+  </div>
+</section>
 <!-- VR -->
 <section id="vr" class="section bg-blue-100">
 
@@ -147,9 +231,12 @@ class="bg-teal-500 text-white px-6 py-3 rounded-lg">
 <a-scene embedded vr-mode-ui="enabled: true">
 
 <a-assets>
-<img id="eljem" src="https://images.unsplash.com/photo-1600185365483-26d7cddaa7db?q=80&w=2000">
+<img id="eljem" src="c.jpg">
 <img id="carthage" src="https://truevirtualtours.com/panorama/29086/360view">
 <img id="dougga" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2000">
+<img id="nature" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2000">
+<img id="sea" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2000">
+<img id="museum" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2000">
 </a-assets>
 
 <a-sky id="sky" src="#eljem"></a-sky>
@@ -389,7 +476,27 @@ function placeName(place){
   if(place==="carthage") return "قرطاج";
   if(place==="dougga") return "دقة";
 }
+function goToVR(activity){
 
+// تنجم تبدل VR حسب النشاط
+if(activity === 'science'){
+  loadPlace('eljem');
+}
+
+if(activity === 'art'){
+  loadPlace('carthage');
+}
+
+if(activity === 'quiz'){
+  document.getElementById('quiz').scrollIntoView({behavior:'smooth'});
+}
+
+if(activity === 'theater'){
+  loadPlace('dougga');
+}
+
+document.getElementById('vr').scrollIntoView({behavior:'smooth'});
+}
 
 </script>
 
