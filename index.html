@@ -157,45 +157,46 @@ body {  margin:0;
     cursor:pointer;
     border-radius:10px;
 }
+#mazeContainer{
+    max-width: 90vw;
+    margin: auto;
+    text-align: center;
+	direction: ltr;
+}
 
-/* MAZE */
-#mazeGrid {
+#mazeGrid{
     display: grid;
-    grid-template-columns: repeat(8, 60px);
-    gap: 5px;
-    direction: ltr;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+	justify-content: center;
+}
+
+.cell{
+    aspect-ratio: 1 / 1; /* يخلي المربعات مربعة */
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    font-size: 5vw;
+    border-radius: 6px;
 }
 
-.cell {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-}
+/* ألوان */
+.wall{ background: #2c3e50; }
+.path{ background: #ecf0f1; }
+.player{ background: #27ae60; }
+.goal{ background: #f39c12; }
 
-.wall {
-    background: #2e7d32;
-}
-
-.path {
-    background: #eeeeee;
-}
-
-.player {
-    background: #ffcc80;
-    font-size: 25px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.goal {
-    background: #a5d6a7;
-    font-size: 25px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+/* تحسين الموبايل */
+@media (max-width: 600px){
+    .cell{
+        font-size: 6vw;
+    }
+	 #controls{
+        display: block !important;
+    }
 }
 
 #colors span{
@@ -210,6 +211,11 @@ body {  margin:0;
 canvas{
     border:2px solid #333;
     background:white;
+	 width: 100%;
+    max-width: 500px;
+    height: auto;
+    border: 1px solid #ccc;
+    touch-action: none; /* important pour éviter scroll sur mobile */
 }
 
 #drawCanvas{
@@ -239,6 +245,22 @@ canvas{
   transform: translateX(-50%) !important;
 }
 
+
+#controls{
+    margin-top: 20px;
+	display: none;
+}
+
+#controls button{
+    font-size: 24px;
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #3498db;
+    color: white;
+}
+
 </style>
 </head>
 
@@ -247,13 +269,15 @@ canvas{
 <!-- NAV -->
 <nav class="bg-teal-700 text-white p-4 text-center text-2xl font-bold">
  منصة تعليمية 
+ <br>
+ هبة بنسالم و صفاء الفرجاني
 </nav>
 
 <!-- HOME -->
 <div >
 <section class="section1" style="   background: 
     linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-    url('bg.jpg') center/cover no-repeat;">
+    url('bg1.jpg') center/cover no-repeat;">
 <h1 class="text-3xl font-bold text-white mb-4">
 مرحبا بكم في رحلة افتراضية لاكتشاف أجمل المعالم التاريخية في تونس
 </h1>
@@ -589,7 +613,14 @@ align="center"></a-text>
 
 <!-- المتاهة الحقيقية -->
 <div id="mazeGrid"></div>
-
+<div id="controls">
+    <button onclick="move(0,-1)">⬆️</button>
+    <div>
+        <button onclick="move(-1,0)">⬅️</button>
+        <button onclick="move(1,0)">➡️</button>
+    </div>
+    <button onclick="move(0,1)">⬇️</button>
+</div>
 </div>
 </div>
 
@@ -613,11 +644,26 @@ align="center"></a-text>
     <span style="background:green" onclick="setColor('green')"></span>
     <span style="background:yellow" onclick="setColor('yellow')"></span>
     <span style="background:black" onclick="setColor('black')"></span>
+	<span style="background:#ff0000" onclick="setColor('#ff0000')"></span>
+    <span style="background:#ff7f00" onclick="setColor('#ff7f00')"></span>
+    <span style="background:#ffff00" onclick="setColor('#ffff00')"></span>
+
+    <span style="background:#00ff00" onclick="setColor('#00ff00')"></span>
+    <span style="background:#00ffff" onclick="setColor('#00ffff')"></span>
+    <span style="background:#0000ff" onclick="setColor('#0000ff')"></span>
+
+    <span style="background:#8000ff" onclick="setColor('#8000ff')"></span>
+    <span style="background:#ff00ff" onclick="setColor('#ff00ff')"></span>
+
+    <span style="background:#ff69b4" onclick="setColor('#ff69b4')"></span>
+    <span style="background:#a52a2a" onclick="setColor('#a52a2a')"></span>
+
+    <span style="background:#808080" onclick="setColor('#808080')"></span>
 </div>
 
 <br>
 
-<button onclick="clearCanvas()">🧹 مسح</button>
+<button onclick="clearCanvas1()">🧹 مسح</button>
 
 <br><br>
 
@@ -1084,7 +1130,16 @@ let currentColor = "black";
 
 let img = new Image();
 
-// 🎯 تحميل الصورة
+// 🎯 resize canvas for crisp drawing
+function fixCanvasSize() {
+    let ratio = window.devicePixelRatio || 1;
+    canvas.width = 500 * ratio;
+    canvas.height = 500 * ratio;
+    ctx.scale(ratio, ratio);
+}
+fixCanvasSize();
+
+// 🎯 image
 function loadImage(src){
     img.src = src;
     img.onload = function(){
@@ -1093,22 +1148,38 @@ function loadImage(src){
     }
 }
 
-// أول صورة
 loadImage("cat.jpeg");
 
-// تغيير الصورة
 document.getElementById("imageSelector").addEventListener("change", function(){
     loadImage(this.value);
 });
 
-// اختيار اللون
+// 🎨 color
 function setColor(color){
     currentColor = color;
 }
 
-// الرسم
-canvas.addEventListener("mousedown", ()=> painting = true);
-canvas.addEventListener("mouseup", ()=> painting = false);
+// =====================
+// 🖱️ PC EVENTS
+canvas.addEventListener("mousedown", () => painting = true);
+canvas.addEventListener("mouseup", () => painting = false);
+canvas.addEventListener("mouseleave", () => painting = false);
+
+// =====================
+// 📱 MOBILE EVENTS
+canvas.addEventListener("touchstart", (e) => {
+    painting = true;
+    drawTouch(e);
+});
+
+canvas.addEventListener("touchend", () => painting = false);
+
+canvas.addEventListener("touchmove", (e) => {
+    drawTouch(e);
+});
+
+// =====================
+// DRAW PC
 canvas.addEventListener("mousemove", draw);
 
 function draw(e){
@@ -1118,14 +1189,34 @@ function draw(e){
     let x = e.clientX - rect.left;
     let y = e.clientY - rect.top;
 
+    paint(x, y);
+}
+
+// DRAW MOBILE
+function drawTouch(e){
+    if(!painting) return;
+
+    let rect = canvas.getBoundingClientRect();
+    let touch = e.touches[0];
+
+    let x = touch.clientX - rect.left;
+    let y = touch.clientY - rect.top;
+
+    paint(x, y);
+
+    e.preventDefault(); // stop scroll
+}
+
+// common paint function
+function paint(x, y){
     ctx.fillStyle = currentColor;
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fill();
 }
 
-// مسح
-function clearCanvas(){
+// clear
+function clearCanvas1(){
     loadImage(img.src);
 }
 
@@ -1158,16 +1249,20 @@ window.onload = function(){
     });
 
     // 🖱️ Events
-    drawCanvasEl.addEventListener("mousedown", startFreeDraw);
-    drawCanvasEl.addEventListener("mouseup", stopFreeDraw);
-    drawCanvasEl.addEventListener("mouseleave", stopFreeDraw);
-    drawCanvasEl.addEventListener("mousemove", drawFree);
+    drawCanvasEl.addEventListener("pointerdown", startFreeDraw);
+drawCanvasEl.addEventListener("pointerup", stopFreeDraw);
+drawCanvasEl.addEventListener("pointercancel", stopFreeDraw);
+drawCanvasEl.addEventListener("pointerleave", stopFreeDraw);
+drawCanvasEl.addEventListener("pointermove", drawFree);
 };
 
 // ▶️ بداية الرسم
-function startFreeDraw(){
+function startFreeDraw(e){
     isDrawing = true;
     drawCtx.beginPath();
+
+    let rect = drawCanvasEl.getBoundingClientRect();
+    drawCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
 }
 
 // ⏹️ إيقاف
@@ -1222,6 +1317,27 @@ function saveImage(){
 
     // تنفيذ التحميل
     link.click();
+}
+
+
+function move(dx, dy){
+    let nx = player.x + dx;
+    let ny = player.y + dy;
+
+    if(nx < 0 || ny < 0 || ny >= maze.length || nx >= maze[0].length) return;
+
+    if(maze[ny][nx] === 0){
+        player.x = nx;
+        player.y = ny;
+    }
+
+    if(player.x === goal.x && player.y === goal.y){
+        setTimeout(()=>{
+            alert("🎉 Bravo !");
+        },100);
+    }
+
+    drawMaze();
 }
 </script>
 
