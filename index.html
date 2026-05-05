@@ -2,15 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>اكتشف تونس بتقنية الواقع الافتراضي</title>
+<title>منصة تعليمية تفاعلية متكاملة</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
 <style>
-body { font-family: sans-serif; }
-.section { padding: 60px 20px; text-align: center; }
+body {  margin:0;
+    font-family:Arial;
+   
+    text-align:center;}
+.section1 { padding: 60px 20px; text-align: center; }
+.section { padding: 60px 20px; text-align: center;}
 
 .option {
   display:block;
@@ -106,6 +110,128 @@ body { font-family: sans-serif; }
   font-weight: bold;
   color: #1e3a8a;
 }
+
+
+.section{display:none;}
+
+.correct{background:green;color:white;}
+.wrong{background:red;color:white;}
+
+.drag{
+    display:inline-block;
+    padding:10px;
+    background:white;
+    color:black;
+    margin:10px;
+    cursor:grab;
+    border-radius:10px;
+}
+
+.drop{
+    width:120px;
+    height:60px;
+    border:2px dashed white;
+    display:inline-block;
+    margin:10px;
+    line-height:60px;
+}
+
+/* MEMORY */
+#game {
+    display:grid;
+    grid-template-columns: repeat(4, 80px);
+    gap:10px;
+    justify-content:center;
+}
+
+.card {
+    width:80px;
+    height:80px;
+    background:#fff;
+    color:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    cursor:pointer;
+    border-radius:10px;
+}
+
+/* MAZE */
+#mazeGrid {
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    gap: 5px;
+    direction: ltr;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+.wall {
+    background: #2e7d32;
+}
+
+.path {
+    background: #eeeeee;
+}
+
+.player {
+    background: #ffcc80;
+    font-size: 25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.goal {
+    background: #a5d6a7;
+    font-size: 25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#colors span{
+    display:inline-block;
+    width:30px;
+    height:30px;
+    margin:5px;
+    border-radius:50%;
+    cursor:pointer;
+}
+
+canvas{
+    border:2px solid #333;
+    background:white;
+}
+
+#drawCanvas{
+    border:3px solid #333;
+    background:white;
+    border-radius:10px;
+    cursor:crosshair;
+}
+
+.toolbar{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.section button{
+    margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;
+}
 </style>
 </head>
 
@@ -113,11 +239,11 @@ body { font-family: sans-serif; }
 
 <!-- NAV -->
 <nav class="bg-blue-700 text-white p-4 text-center text-xl font-bold">
- اكتشف تونس بتقنية الواقع الافتراضي التعليمي
+ منصة تعليمية 
 </nav>
 
 <!-- HOME -->
-<section class="section">
+<section class="section1">
 <h1 class="text-3xl font-bold text-blue-800 mb-4">
 مرحبا بكم في رحلة افتراضية لاكتشاف أجمل المعالم التاريخية في تونس
 </h1>
@@ -129,10 +255,14 @@ body { font-family: sans-serif; }
 class="bg-teal-500 text-white px-6 py-3 rounded-lg">
 ابدأ الرحلة
 </button>
+<button onclick="go('activities')"
+class="bg-teal-500 text-white px-6 py-3 rounded-lg">
+الانشطة
+</button>
 </section>
 
 <!-- PROJECT -->
-<section class="section bg-blue-100">
+<section class="section1 bg-blue-100">
 <h2 class="text-2xl font-bold mb-4">تقديم المشروع</h2>
 <p class="max-w-xl mx-auto">
 يهدف هذا الموقع إلى توظيف الواقع الافتراضي في التعليم، لتمكين التلاميذ من استكشاف المعالم التاريخية بطريقة تفاعلية وممتعة، مما يعزز الفهم ويقرب المعرفة من الواقع.
@@ -140,7 +270,7 @@ class="bg-teal-500 text-white px-6 py-3 rounded-lg">
 </section>
 
 <!-- TRIPS -->
-<section id="trips" class="section">
+<section id="trips" class="section1">
 <h2 class="text-2xl font-bold mb-6">اختيار الرحلة</h2>
 
 <div class="flex justify-center gap-6 flex-wrap">
@@ -181,49 +311,9 @@ class="bg-teal-500 text-white px-6 py-3 rounded-lg">
 </div>
 
 </section>
-<section id="activities" class="py-20 bg-gradient-to-r from-blue-100 to-blue-200">
-  <div class="container mx-auto text-center">
 
-    <h2 class="text-4xl font-bold text-blue-800 mb-12">
-      🎭 الأنشطة الثقافية
-    </h2>
-
-    <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-
-      <!-- Activity 1 -->
-      <div onclick="goToVR('science')" class="activity-card">
-        <img src="https://plus.unsplash.com/premium_vector-1722695852645-9243ff53079c?q=80&w=800" />
-        <h3>🔬 معرض العلوم</h3>
-      </div>
-
-      <!-- Activity 2 -->
-      <div onclick="goToVR('art')" class="activity-card">
-        <img src="https://plus.unsplash.com/premium_vector-1763102298178-5ef5e18228f8?q=80&w=800" />
-        <h3>🎨 ورشة الفنون</h3>
-      </div>
-
-      <!-- Activity 3 -->
-      <div onclick="goToVR('quiz')" class="activity-card">
-        <img src="https://plus.unsplash.com/premium_vector-1721296175273-327b6a8f4c42?w=800" />
-        <h3>🧠 مسابقة المعرفة</h3>
-      </div>
-
-      <!-- Activity 4 -->
-      <div onclick="goToVR('theater')" class="activity-card">
-        <img src="https://plus.unsplash.com/premium_vector-1760425177481-e97c2d2ae44a?w=800" />
-        <h3>🎭 مسرح المدرسة</h3>
-      </div>
-
-    </div>
-
-    <p class="mt-10 text-blue-700 text-lg">
-      ✨ كل نشاط مرتبط بتجربة واقع افتراضي تفاعلية لتعزيز التعلم
-    </p>
-
-  </div>
-</section>
 <!-- VR -->
-<section id="vr" class="section bg-blue-100">
+<section id="vr" class="section1 bg-blue-100">
 
 <h2 id="placeTitle" class="text-2xl font-bold mb-4"></h2>
 <p id="placeDesc" class="mb-4"></p>
@@ -254,7 +344,7 @@ align="center"></a-text>
 </section>
 
 <!-- INFO -->
-<section class="section">
+<section class="section1">
 <h2 class="text-2xl font-bold mb-4">معلومات</h2>
 
 <div id="infoCards" class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"></div>
@@ -262,7 +352,7 @@ align="center"></a-text>
 </section>
 
 <!-- QUIZ -->
-<section class="section bg-blue-100 text-center">
+<section class="section1 bg-blue-100 text-center">
   <h2 class="text-3xl font-bold text-blue-800 mb-6">🎮 اختبار الرحلة</h2>
 
   <div class="bg-white p-6 rounded-xl shadow-lg max-w-xl mx-auto">
@@ -292,6 +382,249 @@ align="center"></a-text>
     </button>
   </div>
 </div>
+
+<div id="congrats2" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center">
+  <div class="bg-white p-10 rounded-xl text-center shadow-lg">
+    <h2 class="text-3xl font-bold text-green-600 mb-4">🎉 أحسنت!</h2>
+    
+    <button onclick="closeCongrats2()" class="bg-green-500 text-white px-6 py-2 rounded">
+      متابعة
+    </button>
+  </div>
+</div>
+
+<!-- activites -->
+<section id="activities" class="py-20 bg-gradient-to-r from-blue-100 to-blue-200">
+  <div class="container mx-auto text-center">
+
+    <h2 class="text-4xl font-bold text-blue-800 mb-12">
+      🎭 الأنشطة الثقافية
+    </h2>
+<div class="score">⭐ النقاط: <span id="score1">0</span></div>
+
+<div>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('quiz')">🧠 أسئلة وأجوبة</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('drag')">🎮 السحب والإفلات</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('letters')">🔤 الحروف</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('numbers')">🔢 الأرقام</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('memory')">🧠 الذاكرة</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('maze')">🌀 المتاهة</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('coloring')">🎨 نشاط التلوين</button>
+<button style=" margin:10px;
+    padding:10px 20px;
+    border:none;
+	background-color:white;
+    border-radius:10px;
+    cursor:pointer;" onclick="show('freeDraw')">🎨 إبداع حر</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+<div style=" align-items:center  ;"><h2>ما عاصمة تونس؟</h2>
+<img src="tunis.jpeg" width="200"></div>
+<button onclick="check(this,true)">تونس</button>
+<button onclick="check(this,false)">سوسة</button>
+<br>
+<h2>اجمع العددين</h2>
+<h2>3 + 2 = ؟</h2>
+<button onclick="check(this,true)">5</button>
+<button onclick="check(this,false)">6</button>
+<br>
+<br>
+<h2>من هو ملك الغابة؟</h2>
+
+<br>
+<button onclick="check(this,false)"><img src="lapin.jpeg" width="150"><h2> أرنب</h2></button>
+<button onclick="check(this,true)"><img src="lion.jpeg" width="150"> <h2>أسد</h2></button>
+<button onclick="check(this,false)"><img src="teacher.jpeg" width="150"> <h2>معلم</h2></button>
+<button onclick="check(this,false)"><img src="king.jpeg" width="150"> <h2>ملك</h2></button>
+</div>
+
+
+<!-- DRAG DROP -->
+<div id="drag" class="section">
+<h2>اسحب الشخصية لمكانها</h2>
+
+<div id="king" class="drag" draggable="true"><img src="king2.jpeg" width="100" height="100"><br> ملك</div>
+<div id="fish" class="drag" draggable="true"><img src="fish.jpeg" width="100" height="100"><br> سمكة</div>
+
+<br>
+
+<div class="drop" style="width:150px; height:150px" data-match="king">قصر<br><img src="ksar.jpeg" width="90" height="90"></div>
+<div class="drop" style="width:150px; height:150px" data-match="fish">بحر<br><img src="sea.jpeg" width="90" height="90"></div>
+
+
+<br>
+<br>
+<h2>رتب القصة</h2>
+
+<!-- العناصر -->
+<div id="grow" class="drag" draggable="true" data-order="3">
+    <img src="plante3.jpeg" width="200" height="200"><br>نمو النبتة
+</div>
+<div id="water" class="drag" draggable="true" data-order="2">
+    <img src="plante2.jpeg" width="200" height="200"><br>سقي النبات
+</div>
+<div id="seed" class="drag" draggable="true" data-order="1">
+    <img src="plante1.jpeg" width="200" height="200"><br>زرع البذرة
+</div>
+<br><br>
+
+<!-- الأماكن -->
+<div class="drop" data-match="seed">1️⃣</div>
+<div class="drop" data-match="water">2️⃣</div>
+<div class="drop" data-match="grow">3️⃣</div>
+
+
+</div>
+
+<!-- LETTERS -->
+<div id="letters" class="section">
+<h2>التقط الحرف: م</h2>
+<button onclick="check(this,false)"><img src="b.jpeg" width="50" height="50"><br></button>
+<button onclick="check(this,true)"><img src="m.jpeg" width="50" height="50"><br></button>
+<button onclick="check(this,false)"><img src="c.jpeg" width="50" height="50"><br></button>
+
+<br>
+<br>
+<h2>التقط الحرف: د</h2>
+<button onclick="check(this,false)"><img src="k.jpeg" width="50" height="50"><br></button>
+<button onclick="check(this,false)"><img src="l.jpeg" width="50" height="50"><br></button>
+<button onclick="check(this,false)"><img src="t.jpeg" width="50" height="50"><br></button>
+<button onclick="check(this,true)"><img src="d.jpeg" width="50" height="50"><br></button>
+</div>
+
+<!-- NUMBERS -->
+<div id="numbers" class="section">
+<h2>اختر العدد الصحيح</h2>
+<img src="3.jpeg" width="90" height="90"><br>
+<button onclick="check(this,false)">4</button>
+<button onclick="check(this,true)">3</button>
+<button onclick="check(this,false)">2</button>
+<br>
+<br>
+<img src="2.jpeg" width="110" height="90"><br>
+<button onclick="check(this,false)">4</button>
+<button onclick="check(this,false)">3</button>
+<button onclick="check(this,true)">2</button>
+<br><br>
+<img src="12.jpeg" width="120" height="120"><br>
+<button onclick="check(this,false)">10</button>
+<button onclick="check(this,false)">11</button>
+<button onclick="check(this,true)">12</button>
+</div>
+
+<!-- MEMORY -->
+<div id="memory" class="section">
+<h2>🧠 لعبة الذاكرة</h2>
+<div id="game"></div>
+</div>
+
+<!-- MAZE -->
+<div id="maze" class="section">
+<div id="mazeContainer">
+
+<h2>🐰 أوصل الأرنب للجزر</h2>
+
+
+<!-- المتاهة الحقيقية -->
+<div id="mazeGrid"></div>
+
+</div>
+</div>
+
+<div id="coloring" class="section">
+
+<h2>🎨 نشاط التلوين</h2>
+
+<!-- اختيار الصورة -->
+<select id="imageSelector">
+    <option value="cat.jpeg">🐱 قطة</option>
+    <option value="butterfly.jpeg">🦋 فراشة</option>
+</select>
+
+<br><br>
+
+<!-- ألوان -->
+<div id="colors">
+    <span style="background:red" onclick="setColor('red')"></span>
+    <span style="background:blue" onclick="setColor('blue')"></span>
+    <span style="background:green" onclick="setColor('green')"></span>
+    <span style="background:yellow" onclick="setColor('yellow')"></span>
+    <span style="background:black" onclick="setColor('black')"></span>
+</div>
+
+<br>
+
+<button onclick="clearCanvas()">🧹 مسح</button>
+
+<br><br>
+
+<canvas id="canvas" width="500" height="500"></canvas>
+
+</div>
+
+<div id="freeDraw" class="section">
+
+<h2>🎨 الإبداع الحر</h2>
+
+<!-- أدوات -->
+<div class="toolbar">
+
+    <input type="color" id="colorPicker" value="#000000">
+
+    <input type="range" id="brushSize" min="1" max="20" value="5">
+
+    <button onclick="setEraser()">🧹 ممحاة</button>
+    <button onclick="clearCanvas()">❌ مسح</button>
+    <button onclick="saveImage()">💾 تحميل</button>
+
+</div>
+
+<br>
+
+<canvas id="drawCanvas" width="600" height="400"></canvas>
+</div>
+    
+
+  </div>
+</section>
+
 
 <!-- EVALUATION -->
 <section class="section">
@@ -498,6 +831,350 @@ if(activity === 'theater'){
 document.getElementById('vr').scrollIntoView({behavior:'smooth'});
 }
 
+
+
+function showCongrats2(){
+  document.getElementById("congrats2").classList.remove("hidden");
+}
+
+function closeCongrats2(){
+  document.getElementById("congrats2").classList.add("hidden");
+}
+
+
+let score1=0;
+
+function updateScore(){
+    document.getElementById("score1").innerText=score1;
+}
+
+function addPoint(){
+    score1++;
+    updateScore();
+}
+
+function show(id){
+    document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+    document.getElementById(id).style.display='block';
+
+    if(id==="memory") initMemory();
+    if(id==="maze") {
+    player = {x:1,y:1}; // إعادة البداية كل مرة
+    drawMaze();
+if(id==="freeDraw"){
+    
+}
+}
+}
+
+function check(btn,correct){
+    if(correct){
+        btn.classList.add("correct");
+        addPoint();
+        showCongrats2();
+    }else{
+        btn.classList.add("wrong");
+        alert("❌ حاول");
+    }
+}
+
+/* DRAG DROP */
+let drags=document.querySelectorAll('.drag');
+let drops=document.querySelectorAll('.drop');
+
+drags.forEach(d=>{
+    d.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData("id",d.id);
+    });
+});
+
+drops.forEach(drop=>{
+    drop.addEventListener('dragover',e=>e.preventDefault());
+
+    drop.addEventListener('drop',e=>{
+        let id=e.dataTransfer.getData("id");
+        if(drop.dataset.match===id){
+            drop.innerHTML="✅ صحيح";
+            addPoint();
+        }else{
+            drop.innerHTML="❌ خطأ";
+        }
+    });
+});
+
+/* MEMORY */
+let icons = ["🍎","🍎","🐱","🐱","🚗","🚗","🌳","🌳"];
+let first=null, second=null;
+
+function initMemory(){
+    let shuffled = icons.sort(()=>0.5-Math.random());
+    let game = document.getElementById("game");
+    game.innerHTML="";
+
+    shuffled.forEach(icon=>{
+        let div=document.createElement("div");
+        div.className="card";
+        div.innerHTML="?";
+        div.dataset.icon=icon;
+
+        div.onclick=()=>{
+            if(div.innerHTML==="?"){
+                div.innerHTML=icon;
+
+                if(!first) first=div;
+                else{
+                    second=div;
+
+                    if(first.dataset.icon===second.dataset.icon){
+                        addPoint();
+                        first=null;
+                        second=null;
+                    }else{
+                        setTimeout(()=>{
+                            first.innerHTML="?";
+                            second.innerHTML="?";
+                            first=null;
+                            second=null;
+                        },700);
+                    }
+                }
+            }
+        };
+
+        game.appendChild(div);
+    });
+}
+
+/* MAZE */
+
+// 0 = طريق ، 1 = حائط
+let maze = [
+[1,1,1,1,1,1,1,1],
+[1,0,0,0,1,0,0,1],
+[1,0,1,0,1,0,1,1],
+[1,0,1,0,0,0,0,1],
+[1,0,1,1,1,1,0,1],
+[1,0,0,0,0,1,0,1],
+[1,1,1,1,0,0,0,1],
+[1,1,1,1,1,1,1,1]
+];
+
+// البداية والنهاية
+let player = {x:1,y:1};
+let goal = {x:6,y:6};
+
+let grid = document.getElementById("mazeGrid");
+
+// رسم المتاهة
+function drawMaze(){
+    grid.innerHTML="";
+
+    for(let y=0;y<maze.length;y++){
+        for(let x=0;x<maze[y].length;x++){
+
+            let div = document.createElement("div");
+            div.className = "cell";
+
+            if(maze[y][x] === 1){
+                div.classList.add("wall");
+            } else {
+                div.classList.add("path");
+            }
+
+            if(x === player.x && y === player.y){
+                div.classList.add("player");
+                div.innerHTML = "🐰";
+            }
+
+            if(x === goal.x && y === goal.y){
+                div.classList.add("goal");
+                div.innerHTML = "🥕";
+            }
+
+            grid.appendChild(div);
+        }
+    }
+}
+
+drawMaze();
+
+// التحكم
+document.addEventListener("keydown", function(e){
+
+    let nx = player.x;
+    let ny = player.y;
+
+    if(e.key === "ArrowUp") ny--;
+    if(e.key === "ArrowDown") ny++;
+    if(e.key === "ArrowLeft") nx--;
+    if(e.key === "ArrowRight") nx++;
+
+    // حدود
+    if(nx < 0 || ny < 0 || ny >= maze.length || nx >= maze[0].length) return;
+
+    // 🔥 يسمح فقط في الطريق
+    if(maze[ny][nx] === 0){
+        player.x = nx;
+        player.y = ny;
+    }
+
+    // فوز
+    if(player.x === goal.x && player.y === goal.y){
+        setTimeout(()=>{
+            alert("🎉 Bravo !");
+        },100);
+    }
+
+    drawMaze();
+});
+
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+let painting = false;
+let currentColor = "black";
+
+let img = new Image();
+
+// 🎯 تحميل الصورة
+function loadImage(src){
+    img.src = src;
+    img.onload = function(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img,0,0,500,500);
+    }
+}
+
+// أول صورة
+loadImage("cat.jpeg");
+
+// تغيير الصورة
+document.getElementById("imageSelector").addEventListener("change", function(){
+    loadImage(this.value);
+});
+
+// اختيار اللون
+function setColor(color){
+    currentColor = color;
+}
+
+// الرسم
+canvas.addEventListener("mousedown", ()=> painting = true);
+canvas.addEventListener("mouseup", ()=> painting = false);
+canvas.addEventListener("mousemove", draw);
+
+function draw(e){
+    if(!painting) return;
+
+    let rect = canvas.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    ctx.fillStyle = currentColor;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// مسح
+function clearCanvas(){
+    loadImage(img.src);
+}
+
+
+// 🎨 Free Draw (بدون تعارض)
+
+let drawCanvasEl, drawCtx;
+let isDrawing = false;
+let currentDrawColor = "#000";
+
+// تشغيل بعد تحميل الصفحة
+window.onload = function(){
+
+    drawCanvasEl = document.getElementById("drawCanvas");
+
+    if(!drawCanvasEl){
+        console.error("Canvas not found ❌");
+        return;
+    }
+
+    drawCtx = drawCanvasEl.getContext("2d");
+
+    let colorPickerEl = document.getElementById("colorPicker");
+    let brushSizeEl = document.getElementById("brushSize");
+
+    currentDrawColor = colorPickerEl.value;
+
+    colorPickerEl.addEventListener("change", ()=>{
+        currentDrawColor = colorPickerEl.value;
+    });
+
+    // 🖱️ Events
+    drawCanvasEl.addEventListener("mousedown", startFreeDraw);
+    drawCanvasEl.addEventListener("mouseup", stopFreeDraw);
+    drawCanvasEl.addEventListener("mouseleave", stopFreeDraw);
+    drawCanvasEl.addEventListener("mousemove", drawFree);
+};
+
+// ▶️ بداية الرسم
+function startFreeDraw(){
+    isDrawing = true;
+    drawCtx.beginPath();
+}
+
+// ⏹️ إيقاف
+function stopFreeDraw(){
+    isDrawing = false;
+}
+
+// ✏️ رسم
+function drawFree(e){
+    if(!isDrawing) return;
+
+    let rect = drawCanvasEl.getBoundingClientRect();
+
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    drawCtx.lineWidth = document.getElementById("brushSize").value;
+    drawCtx.lineCap = "round";
+    drawCtx.strokeStyle = currentDrawColor;
+
+    drawCtx.lineTo(x, y);
+    drawCtx.stroke();
+
+    drawCtx.beginPath();
+    drawCtx.moveTo(x, y);
+}
+
+// 🧹 ممحاة
+function setEraser(){
+    currentDrawColor = "white";
+}
+
+// ❌ مسح
+function clearCanvas(){
+    drawCtx.clearRect(0,0,drawCanvasEl.width,drawCanvasEl.height);
+}
+// 💾 حفظ الرسم كصورة
+function saveImage(){
+
+    if(!drawCanvasEl){
+        alert("Canvas غير موجود ❌");
+        return;
+    }
+
+    // تحويل canvas إلى صورة
+    let imageURL = drawCanvasEl.toDataURL("image/png");
+
+    // إنشاء رابط تحميل
+    let link = document.createElement("a");
+    link.href = imageURL;
+    link.download = "dessin.png";
+
+    // تنفيذ التحميل
+    link.click();
+}
 </script>
 
 </body>
